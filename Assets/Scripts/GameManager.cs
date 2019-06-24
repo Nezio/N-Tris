@@ -35,6 +35,12 @@ public class GameManager : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        // rotate block right; TODO: move this code to where it should be (maybe controller script?)
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            RotatePiece(ref activePiece);
+        }
     }
 
     IEnumerator Tick()
@@ -77,7 +83,7 @@ public class GameManager : MonoBehaviour
     {
         // spawn random piece in the middle of top playing field border
         GameObject piece = pieceGallery[Random.Range(0, pieceGallery.Length)];
-        Vector3 location = new Vector3((playfieldWidth - 1) / 2, playfieldHeight, 0);
+        Vector3 location = new Vector3((float)(playfieldWidth - 1) / 2, (float)playfieldHeight, (float)0);
         activePiece = GameObject.Instantiate(piece, location, Quaternion.identity);
 
         // random rotation
@@ -95,10 +101,35 @@ public class GameManager : MonoBehaviour
         activePiece.transform.position = new Vector3(activePiece.transform.position.x, activePiece.transform.position.y + offset, activePiece.transform.position.z);
 
         // snap to grid fn
-
+        SnapPieceToGrid(ref activePiece);
     }
 
+    void SnapPieceToGrid(ref GameObject piece)
+    { // move the piece so that tiles within it allign to the grid
+        Transform tile = piece.transform.GetChild(0);
+        float offsetX = tile.position.x % 1;
+        float offsetY = tile.position.y % 1;
+        float newX;
+        float newY;
 
+        if (offsetX < 0.5)
+            newX = piece.transform.position.x - offsetX;
+        else
+            newX = piece.transform.position.x + 1 - offsetX;
+
+        if (offsetY < 0.5)
+            newY = piece.transform.position.y - offsetY;
+        else
+            newY = piece.transform.position.y + 1 - offsetY;
+
+        piece.transform.position = new Vector3(newX, newY, piece.transform.position.z);
+    }
+
+    void RotatePiece(ref GameObject piece)
+    {
+        piece.transform.Rotate(0, 0, -90);
+        SnapPieceToGrid(ref piece);
+    }
 
 }
 
