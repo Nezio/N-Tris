@@ -36,11 +36,6 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        // rotate block right; TODO: move this code to where it should be (maybe controller script?)
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            RotatePiece(ref activePiece);
-        }
     }
 
     IEnumerator Tick()
@@ -48,6 +43,8 @@ public class GameManager : MonoBehaviour
         //Debug.Log("Tick");
 
         // update piece (move down if possible)
+        if(activePiece)
+
         // if not possible spawn new piece and update activePiece
 
 
@@ -87,49 +84,23 @@ public class GameManager : MonoBehaviour
         activePiece = GameObject.Instantiate(piece, location, Quaternion.identity);
 
         // random rotation
+        int rotateAmount = Random.Range(0, 3);
+        for(int i = 0; i < rotateAmount; i++)
+            activePiece.GetComponent<Piece>().RotateRight();
 
         // find bottom most tile
-        Transform lowestTile = activePiece.transform.GetChild(0);
-        foreach(Transform tile in activePiece.transform)
-        {
-            if (tile.position.y < lowestTile.position.y)
-                lowestTile = tile;
-        }
+        Transform lowestTile = activePiece.GetComponent<Piece>().GetLowestTile();
         //Debug.Log(lowestTile.position);
+
         // move piece so that bottom most tile is just above playgroundHeight
-        float offset = activePiece.transform.position.y - lowestTile.position.y;
+        float offset = playfieldHeight - lowestTile.position.y;
         activePiece.transform.position = new Vector3(activePiece.transform.position.x, activePiece.transform.position.y + offset, activePiece.transform.position.z);
-
+        
         // snap to grid fn
-        SnapPieceToGrid(ref activePiece);
+        activePiece.GetComponent<Piece>().SnapToGrid();
     }
 
-    void SnapPieceToGrid(ref GameObject piece)
-    { // move the piece so that tiles within it allign to the grid
-        Transform tile = piece.transform.GetChild(0);
-        float offsetX = tile.position.x % 1;
-        float offsetY = tile.position.y % 1;
-        float newX;
-        float newY;
-
-        if (offsetX < 0.5)
-            newX = piece.transform.position.x - offsetX;
-        else
-            newX = piece.transform.position.x + 1 - offsetX;
-
-        if (offsetY < 0.5)
-            newY = piece.transform.position.y - offsetY;
-        else
-            newY = piece.transform.position.y + 1 - offsetY;
-
-        piece.transform.position = new Vector3(newX, newY, piece.transform.position.z);
-    }
-
-    void RotatePiece(ref GameObject piece)
-    {
-        piece.transform.Rotate(0, 0, -90);
-        SnapPieceToGrid(ref piece); // not really needed, but its here just in case piece moves to 1.002 instead of 1
-    }
+    
 
 }
 
