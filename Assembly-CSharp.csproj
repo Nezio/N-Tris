@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Piece.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Development/Unity/N-Tris/N-Tris/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

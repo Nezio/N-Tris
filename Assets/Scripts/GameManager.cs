@@ -128,7 +128,7 @@ public class GameManager : MonoBehaviour
     void RotatePiece(ref GameObject piece)
     {
         piece.transform.Rotate(0, 0, -90);
-        SnapPieceToGrid(ref piece);
+        SnapPieceToGrid(ref piece); // not really needed, but its here just in case piece moves to 1.002 instead of 1
     }
 
 }
